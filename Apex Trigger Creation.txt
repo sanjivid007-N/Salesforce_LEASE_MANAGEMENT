@@ -1,0 +1,76 @@
+Apex Trigger
+Use case:
+The tenant and property are in a master-detail relationship, wherein each tenant is associated with only one property. When a tenant attempts to create a new record with an existing property, an error should be displayed, indicating that a tenant can have only one property.
+
+ 
+
+Write a code to achieve this requirement using Salesforce developer skills to fulfill the Managers requirement.
+
+Create an Apex Trigger
+To create a new Apex Class follow the below steps:
+Click on the file >> New ? Apex Class.
+Give the Apex Trigger name as “test”, and select “Tenant__c” from the dropdown for sObject.
+
+
+
+Click Submit.
+
+Now write the code logic here
+
+
+
+
+Trigger Code:
+
+trigger test on Tenant__c (before insert) 
+
+{
+
+    if(trigger.isInsert && trigger.isBefore){
+
+        testHandler.preventInsert(trigger.new);
+
+    }
+
+}
+
+Create an Apex Handler class
+To create a new Apex Class follow the below steps:
+Click on the file >> New >>Apex Class.
+2. Enter class name as testHandler.
+
+
+
+Apex logic:
+
+public class testHandler {
+
+   public static void preventInsert(List<Tenant__c> newlist) {
+
+        Set<Id> existingPropertyIds = new Set<Id>();
+
+        for (Tenant__c existingTenant : [SELECT Id, Property__c FROM Tenant__c WHERE Property__c != null]) {
+
+            existingPropertyIds.add(existingTenant.Property__c);
+
+        }
+
+
+        for (Tenant__c newTenant : newlist) {
+
+            
+
+            if (newTenant.Property__c != null && existingPropertyIds.contains(newTenant.Property__c)) {
+
+                newTenant.addError('A tenant can have only one property');
+
+            }
+
+        }
+
+    }
+
+}
+
+
+

@@ -1,0 +1,106 @@
+Create an Apex Class
+1. To create a new Apex Class follow the below steps:
+Click on the file >> New >> Apex Class.
+2. Enter class name as MonthlyEmailScheduler.
+
+
+
+Apex logic:
+
+global class MonthlyEmailScheduler implements Schedulable {
+
+    global void execute(SchedulableContext sc) {
+
+        Integer currentDay = Date.today().day();
+
+        if (currentDay == 1) {
+
+            sendMonthlyEmails();
+
+        }
+
+    }
+
+
+    public static void sendMonthlyEmails() {
+
+       
+
+        List<Tenant__c> tenants = [SELECT Id, Email__c FROM Tenant__c];
+
+
+
+        for (Tenant__c tenant : tenants) {
+
+            String recipientEmail = tenant.Email__c;
+
+            String emailContent = 'I trust this email finds you well. I am writing to remind you that the monthly rent  is due Your timely payment ensures the smooth functioning of our rental arrangement and helps maintain a positive living environment for all.';
+
+            String emailSubject = 'Reminder: Monthly Rent Payment Due';
+
+
+            Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+
+            email.setToAddresses(new String[]{recipientEmail});
+
+            email.setSubject(emailSubject);
+
+            email.setPlainTextBody(emailContent);
+
+            
+
+             Messaging.sendEmail(new Messaging.SingleEmailMessage[]{email});
+
+        }
+
+    }
+
+}
+
+
+ 
+
+Save the code.
+
+Schedule Apex class
+Enter Apex class in quick find box
+
+Select schedule Apex
+
+Enter job Name : MonthlyEmailScheduler
+
+Apex class : MonthlyEmailScheduler
+
+Frequency : Monthly===>select on day 1
+
+Start date : 04/12/2023
+
+End date : 04/01/2024
+
+Preferred start time : 09:00 am
+
+save
+
+
+
+
+
+Testing the approval process
+
+
+
+Enter any comment am\nd click on submit
+
+
+
+
+
+
+Click on that notification
+
+click on approve
+
+Give any comment and submit
+
+You will find notification like this and you will get an email check
+Note: similarly do for reject also you will get mail and notification
